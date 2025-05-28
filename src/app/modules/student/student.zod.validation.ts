@@ -1,48 +1,48 @@
+// student.validation.ts
+
 import { z } from 'zod';
 
-// userName validation
+// Zod schemas
+
 const userNameZodSchema = z.object({
-  fistName: z.string({ required_error: 'First Name is required' }),
+  fistName: z.string({ required_error: "First Name is required" }),
   middleName: z.string().optional(),
-  lastName: z.string({ required_error: 'Last Name is required' }),
+  lastName: z.string({ required_error: "Last Name is required" }),
 });
 
-// guardian validation
 const guardianZodSchema = z.object({
-  fatherName: z.string().optional(),
-  fatherOccupation: z.string().optional(),
-  fatherContact: z.string().optional(),
-  motherName: z.string().optional(),
-  motherOccupation: z.string().optional(),
-  motherContact: z.string().optional(),
+  fatherName: z.string(),
+  fatherOccupation: z.string(),
+  fatherContact: z.string(),
+  motherName: z.string(),
+  motherOccupation: z.string(),
+  motherContact: z.string(),
 });
 
-// localGuardian validation
 const localGuardianZodSchema = z.object({
-  name: z.string().optional(),
-  occupation: z.string().optional(),
-  contact: z.string().optional(),
-  address: z.string().optional(),
+  name: z.string(),
+  occupation: z.string(),
+  contact: z.string(),
+  address: z.string(),
 });
 
-// student validation
 export const studentZodSchema = z.object({
-  id: z.string({ required_error: 'ID is required' }),
+  id: z.string().min(1, { message: "ID is required" }),
   name: userNameZodSchema,
   gender: z.enum(['male', 'female'], {
-    required_error: 'Gender is required',
-    invalid_type_error: 'Invalid gender value',
+    required_error: "Gender is required",
+    invalid_type_error: "Invalid gender",
   }),
-  dateOfBirth: z.string().optional(),
-  email: z.string({ required_error: 'Email is required' }).email('Invalid email format'),
-  contactNumber: z.string({ required_error: 'Contact Number is required' }),
-  BloodGroup: z.enum(['A+', 'B+', 'A-']).optional(),
-  presentAddress: z.string({ required_error: 'Present Address is required' }),
-  permanentAddress: z.string({ required_error: 'Permanent Address is required' }),
+  dateOfBirth: z.string(),
+  email: z.string().email({ message: "Invalid email address" }),
+  emergencyContact:z.string(),
+  contactNumber: z.string().min(1, { message: "Contact number is required" }),
+  BloodGroup: z.enum(['A+', 'B+', 'A-']),
+  presentAddress: z.string().min(1, { message: "Present address is required" }),
+  permanentAddress: z.string().min(1, { message: "Permanent address is required" }),
   Guardian: guardianZodSchema,
   localGuardian: localGuardianZodSchema,
-  profileImg: z.string().optional(),
+  profileImg: z.string(),
   isActive: z.enum(['Active', 'Inactive']).default('Active'),
 });
-
 export default studentZodSchema;
