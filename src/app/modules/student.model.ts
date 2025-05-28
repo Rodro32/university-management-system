@@ -6,8 +6,6 @@ const userNameSchema = new Schema<userName>({
     fistName: {
       type: String,
       required:[true, "First Name is required"],
-      // trim: true,
-      // maxlength:[20,"First Name cannot be more then 10 character"],
     },
     middleName:{
       type: String,
@@ -86,7 +84,6 @@ const studentSchema = new Schema < Student> ({
   BloodGroup:{
     type: String,
     enum: ["A+", "B+", "A-"],
-    required: true,
   },
   presentAddress:{
     type : String,
