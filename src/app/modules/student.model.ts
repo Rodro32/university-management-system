@@ -1,5 +1,7 @@
 import { Schema, model, connect } from 'mongoose';
-import { TGuardian, TStudent,  TlocalGuardian, TuserName, studentMethods, StudentModel } from './student/student.interface';
+import { TGuardian, TStudent,  TlocalGuardian, TuserName, StudentModel } from './student/student.interface';
+import bcrypt from 'bcrypt';
+import config from '../config';
 
 const userNameSchema = new Schema<TuserName>({
   
@@ -57,8 +59,9 @@ const localGuardianSchema = new Schema <TlocalGuardian> (
   }
 )
 
-const studentSchema = new Schema < TStudent,studentMethods,StudentModel> ({
+const studentSchema = new Schema < TStudent,StudentModel> ({
   id: {type: String, required: true, unique: true},
+  password: {type: String, required: true, unique: true},
   name:{
     type: userNameSchema,
     required: true,
@@ -110,9 +113,38 @@ const studentSchema = new Schema < TStudent,studentMethods,StudentModel> ({
 })
 
 
-studentSchema.methods.isUserExits = async function(id:string){
+// pre save middleware 
+studentSchema.pre('save',async function (next){
+  const user = this;
+  // console.log(this,'pre hook: we will save the data')
+  // hashing password and then save into DB
+  user.password =await bcrypt.hash(user.password,Number(config.bcrypt_salt_round));
+  next();
+})
+
+// post save middleware 
+studentSchema.post('save',function(){
+  console.log(this,'post hook : we saved the data');
+})
+
+
+
+
+// #creating a custom static method
+studentSchema.statics.isUserExist = async function (id:string){
   const existingUser = await Student.findOne({id})
   return existingUser;
 }
-// creating model
+
+
+
+
+// creating an instance method
+// studentSchema.methods.isUserExist = async function (id:string){
+//   const existingUser = await Student.findOne({id})
+//   return existingUser;
+// }
+
+
+// creating model for student data
 export const Student = model<TStudent,StudentModel>('Student',studentSchema)

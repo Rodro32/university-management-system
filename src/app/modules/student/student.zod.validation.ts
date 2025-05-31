@@ -28,6 +28,7 @@ const localGuardianZodSchema = z.object({
 
 export const studentZodSchema = z.object({
   id: z.string().min(1, { message: "ID is required" }),
+  password: z.string().max(20),
   name: userNameZodSchema,
   gender: z.enum(['male', 'female'], {
     required_error: "Gender is required",
