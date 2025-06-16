@@ -27,24 +27,27 @@ const localGuardianZodSchema = z.object({
 });
 
 export const studentZodSchema = z.object({
-  id: z.string().min(1, { message: "ID is required" }),
-  password: z.string().max(20),
-  name: userNameZodSchema,
-  gender: z.enum(['male', 'female'], {
-    required_error: "Gender is required",
-    invalid_type_error: "Invalid gender",
-  }),
-  dateOfBirth: z.string(),
-  email: z.string().email({ message: "Invalid email address" }),
-  emergencyContact:z.string(),
-  contactNumber: z.string().min(1, { message: "Contact number is required" }),
-  BloodGroup: z.enum(['A+', 'B+', 'A-']),
-  presentAddress: z.string().min(1, { message: "Present address is required" }),
-  permanentAddress: z.string().min(1, { message: "Permanent address is required" }),
-  Guardian: guardianZodSchema,
-  localGuardian: localGuardianZodSchema,
-  profileImg: z.string(),
-  isActive: z.enum(['Active', 'Inactive']).default('Active'),
-  isDeleted:z.boolean().default(false),
-});
-export default studentZodSchema;
+  body: z.object({
+    password: z.string().max(20),
+   student:z.object({
+    name: userNameZodSchema,
+    gender: z.enum(['male', 'female'], {
+      required_error: "Gender is required",
+      invalid_type_error: "Invalid gender",
+    }),
+    dateOfBirth: z.string(),
+    email: z.string().email({ message: "Invalid email address" }),
+    emergencyContact:z.string(),
+    contactNumber: z.string().min(1, { message: "Contact number is required" }),
+    BloodGroup: z.enum(['A+', 'B+', 'A-']),
+    presentAddress: z.string().min(1, { message: "Present address is required" }),
+    permanentAddress: z.string().min(1, { message: "Permanent address is required" }),
+    Guardian: guardianZodSchema,
+    localGuardian: localGuardianZodSchema,
+    profileImg: z.string(),
+   })
+  })
+})
+export const studentValidations ={
+  studentZodSchema,
+} 
