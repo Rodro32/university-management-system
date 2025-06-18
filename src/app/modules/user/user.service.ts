@@ -29,9 +29,9 @@ const createStudentToDB = async (password: string,payload: TStudent)=>{
   if (!admissionSemester) {
     throw new Error("Admission semester not found!");
   }
-  
+
   // set manually generated id
-  userData.id = generateStudentId(admissionSemester);
+  userData.id =await generateStudentId(admissionSemester);
 
   // set student role
   const newUser = await User.create(userData);
