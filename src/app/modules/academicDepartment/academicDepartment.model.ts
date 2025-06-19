@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { TAcademicDepartment } from "./academicDepartment.interface";
+import AppError from "../../Errors/AppErrors";
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>({
   name: {
@@ -17,12 +18,13 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>({
 
 
 
+
 academicDepartmentSchema.pre('save', async function(next){
   const isDepartmentExits = await AcademicDepartment.findOne({
     name: this.name
   });
   if(isDepartmentExits){
-    throw new Error ("Department already exits!");
+    throw new AppError(404,"Department already exits!");
   }
   next();
 
