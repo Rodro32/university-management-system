@@ -49,6 +49,51 @@ export const studentZodSchema = z.object({
    })
   })
 })
+
+const updateUserNameZodSchema = z.object({
+  firstName: z.string().optional(),
+  middleName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+const updateGuardianZodSchema = z.object({
+  fatherName: z.string().optional(),
+  fatherOccupation: z.string().optional(),
+  fatherContact: z.string().optional(),
+  motherName: z.string().optional(),
+  motherOccupation: z.string().optional(),
+  motherContact: z.string().optional(),
+});
+
+const updateLocalGuardianZodSchema = z.object({
+  name: z.string().optional(),
+  occupation: z.string().optional(),
+  contact: z.string().optional(),
+  address: z.string().optional(),
+});
+
+// Update student schema
+
+export const updateStudentZodSchema = z.object({
+  body: z.object({
+    student: z.object({
+      name: updateUserNameZodSchema.optional(),
+      gender: z.enum(['male', 'female']).optional(),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email({ message: "Invalid email address" }).optional(),
+      emergencyContact: z.string().optional(),
+      contactNumber: z.string().optional(),
+      BloodGroup: z.enum(['A+', 'B+', 'A-']).optional(),
+      presentAddress: z.string().optional(),
+      permanentAddress: z.string().optional(),
+      Guardian: updateGuardianZodSchema.optional(),
+      localGuardian: updateLocalGuardianZodSchema.optional(),
+      profileImg: z.string().optional(),
+      admissionSemester: z.string().optional(),
+    }).optional()
+  })
+});
 export const studentValidations ={
   studentZodSchema,
+  updateStudentZodSchema,
 } 

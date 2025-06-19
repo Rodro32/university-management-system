@@ -10,11 +10,8 @@ import { User } from "./user.model";
 import { generateStudentId } from "./user.utils";
 
 const createStudentToDB = async (password: string,payload: TStudent)=>{
-  // built in static method
-  // if(await Student.isUserExist(studentData.id)){
-  //   throw new Error('user already exits')
-  // }
 
+  
   // create a empty object
   const userData: Partial<TUser> ={};
 

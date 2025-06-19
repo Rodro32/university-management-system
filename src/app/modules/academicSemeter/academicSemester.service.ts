@@ -6,11 +6,6 @@ import { academicSemester } from "./academicSemester.model"
 const createAcademicSemesterIntoDB =async (payload:TAcademicSemester) =>{
 
   // semester name --> semester code
-
-
-
-  
-
     if(academicSemesterNameCodeMapper[payload.name]!== payload.code){
       throw new Error ('Invalid Semester Code');
     }
