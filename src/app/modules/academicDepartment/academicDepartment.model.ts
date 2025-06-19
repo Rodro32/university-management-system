@@ -16,4 +16,22 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>({
 })
 
 
+
+academicDepartmentSchema.pre('save', async function(next){
+  const isDepartmentExits = await AcademicDepartment.findOne({
+    name: this.name
+  });
+  if(isDepartmentExits){
+    throw new Error ("Department already exits!");
+  }
+  next();
+
+});
+
+
+
+
+
+
+
 export const AcademicDepartment = model<TAcademicDepartment>('AcademicDepartment',academicDepartmentSchema);
