@@ -23,8 +23,8 @@ const getAllStudent :RequestHandler= catchAsync(async (req, res) => {
 // get single student data from data
 const getSingleStudent = catchAsync(async (req, res) => {
   
-    const { studentId } = req.params;
-    const result = await studentService.getSingleStudentFromDB(studentId);
+    const { id } = req.params;
+    const result = await studentService.getSingleStudentFromDB(id);
     res.status(200).json({
       success: true,
       message: 'student is retrieve successfully',
@@ -34,9 +34,9 @@ const getSingleStudent = catchAsync(async (req, res) => {
 
 const updateSingleStudent = catchAsync(async (req, res,next) => {
   
-  const { studentId } = req.params;
+  const { id} = req.params;
   const {student} = req.body;
-  const result = await studentService.updateStudentIntoDB(studentId, student);
+  const result = await studentService.updateStudentIntoDB(id, student);
   res.status(200).json({
     success: true,
     message: 'student is updated successfully',
@@ -48,9 +48,9 @@ const updateSingleStudent = catchAsync(async (req, res,next) => {
 
 const deleteSingleStudent = catchAsync(async (req, res,next) => {
   
-  const { studentId } = req.params;
+  const { id} = req.params;
 
-  const result = await studentService.deleteStudentFromDB(studentId);
+  const result = await studentService.deleteStudentFromDB(id);
   res.status(200).json({
     success: true,
     message: 'student is deleted successfully',
