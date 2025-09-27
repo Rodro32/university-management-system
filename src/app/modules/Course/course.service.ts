@@ -25,7 +25,7 @@ const getSingleCoursesFromDB = async(id: string)=>{
   return result;
 }
 
-const updateCourse = async(id: string,payload: Partial<TCourse>)=>{
+const updateCourseIntoDB = async(id: string,payload: Partial<TCourse>)=>{
   
 }
 
@@ -43,5 +43,5 @@ export const courseServices = {
   getAllCoursesFromDB,
   getSingleCoursesFromDB,
   deleteCourseFromDB,
-  updateCourse
+  updateCourseIntoDB,
 }

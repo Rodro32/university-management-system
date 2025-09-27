@@ -41,12 +41,12 @@ const getAllCourses = catchAsync(async (req, res) => {
 
 const updateCourse = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await courseServices.updateCourse( id ,req.body);
+  const result = await courseServices.updateCourseIntoDB( id ,req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is updated successfully',
+    message: 'Course is updated successfully',
     data: result,
   });
 });
