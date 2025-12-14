@@ -11,7 +11,7 @@ CourseControllers.createCourse)
 
 router.patch('/:id',
 validateRequest( CourseValidation.updateCourseValidationSchema),
-CourseControllers.updateCourse)
+CourseControllers.updateCourse);
 
 
 router.get('/:id', CourseControllers.getSingleCourse)

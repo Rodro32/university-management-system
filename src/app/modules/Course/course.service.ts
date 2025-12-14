@@ -3,7 +3,7 @@ import { courseSearchableField } from "./course.constant";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model"
 
-const createCourseIntoDB = async(payload :TCourse)=>{
+const createCourseIntoDB = async(payload:TCourse)=>{
   const result = await Course.create(payload);
   return result;
 }
@@ -19,29 +19,45 @@ const getAllCoursesFromDB = async(query: Record<string,unknown>)=>{
   return result;
 }
 
-const getSingleCoursesFromDB = async(id: string)=>{
+const getSingleCourseFromDB = async(id:string)=>{
   const result = await Course.findById(id).populate('preRequestCourses.course');
-  console.log(result)
   return result;
 }
 
-const updateCourseIntoDB = async(id: string,payload: Partial<TCourse>)=>{
-  
+
+const updateCourseIntoDB = async(id:string, payload:Partial<TCourse>)=>{
+  const {preRequestCourses, ...courseRemaining} = payload;
+
+
+  const updateBasicCourseInfo = await Course.findByIdAndUpdate(
+    id,
+    courseRemaining,
+    {
+      new:true,
+      runValidators:true,
+    });
+
+    // if(preRequestCourses && preRequestCourses.length>0){
+    //   const deletedPreRequisite = preRequestCourses.filter(el=>el.course && el.isDeleted)
+    // };
+    // console.log(deletedPreRequisite)
+    return updateBasicCourseInfo;
 }
 
-const deleteCourseFromDB = async(id: string, )=>{
+const deleteCourseFromDB = async(id:string)=>{
   const result = await Course.findByIdAndUpdate(
-    id,
-    {isDeleted: true},
-    {new: true}
-    );
+    id,{
+      isDeleted:true,
+    },{
+      new:true,
+    });
   return result;
 }
 
 export const courseServices = {
   createCourseIntoDB,
   getAllCoursesFromDB,
-  getSingleCoursesFromDB,
+  getSingleCourseFromDB,
   deleteCourseFromDB,
-  updateCourseIntoDB,
+  updateCourseIntoDB
 }
