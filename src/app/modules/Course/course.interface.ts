@@ -13,3 +13,8 @@ export type TCourse = {
   preRequestCourses: [TPreRequestCourses],
   isDeleted?: boolean,
 }
+
+export type TCourseFaculty = {
+  course: Types.ObjectId,
+  faculties:[Types.ObjectId]
+}
