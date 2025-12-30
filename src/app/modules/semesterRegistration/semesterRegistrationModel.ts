@@ -6,7 +6,6 @@ const semesterRegistrationSchema = new mongoose.Schema<TSemesterRegistration>({
   academicSemester:{
     type:Schema.Types.ObjectId,
     unique:true,
-    required:true,
     ref:'AcademicSemester'
   },
   status:{
@@ -16,11 +15,9 @@ const semesterRegistrationSchema = new mongoose.Schema<TSemesterRegistration>({
   },
   startDate:{
     type:Date,
-    required:true,
   },
   endDate:{
     type:Date,
-    required:true,
   },
   minCredit:{
     type:Number,

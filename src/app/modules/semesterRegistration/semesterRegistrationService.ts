@@ -6,6 +6,7 @@ import { TSemesterRegistration } from "./semesterRegistrationInterface"
 import { SemesterRegistration } from "./semesterRegistrationModel";
 import sendResponse from "../../utils/sendResponse";
 import catchAsync from "../../utils/catchAsync";
+import { registrationStatus } from "./semesterRegistrationConstant";
 
 const createSemesterRegistrationIntoDB = async (payload:TSemesterRegistration)=>{
   
@@ -14,8 +15,8 @@ const createSemesterRegistrationIntoDB = async (payload:TSemesterRegistration)=>
   //check upcoming registered semester 
   const isAnyUpcomingOngoingSemesterRegistration = await 
   SemesterRegistration.findOne({
-    $or:[{status:'ONGOING'},
-    {status:'UPCOMING'}
+    $or:[{status:registrationStatus.ONGOING},
+    {status:registrationStatus.UPCOMING}
   ]
   })
 
@@ -70,13 +71,29 @@ const updateSemesterRegistrationFromDB = async(id:string,payload:Partial<TSemest
   
 
   const currentSemesterStatus = await isSemesterRegistrationExists?.status
+  const requestedStatus = payload?.status
 
-
-  if(currentSemesterStatus === 'ENDED'){
+  if(currentSemesterStatus === registrationStatus.ENDED){
     throw new AppError(404,'Semester already Ended')
   }
-  const result = await SemesterRegistration.create(payload);
+
+  if(currentSemesterStatus === registrationStatus.UPCOMING && requestedStatus === registrationStatus.ENDED){
+    throw new AppError(404,`You can not directly change the semester from ${currentSemesterStatus} to ${requestedStatus}`)
+  }
+
+  if(currentSemesterStatus === registrationStatus.ONGOING && requestedStatus === registrationStatus.UPCOMING){
+    throw new AppError(404,`You can not directly change the semester from ${currentSemesterStatus} to ${requestedStatus}`)
+  }
+
+
+
+
+  const result = await SemesterRegistration.findByIdAndUpdate(id,payload,{
+    new:true,
+    runValidators:true,
+  });
   return result;
+
 }
 
 const getSingleSemesterRegistrationFromDB = async(id:string)=>{
