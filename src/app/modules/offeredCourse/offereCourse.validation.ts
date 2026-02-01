@@ -11,7 +11,7 @@ const createOfferedCourseValidationSchema = z.object({
     maxCapacity: z.number(),
     section: z.number(),
 
-    days: z.enum(["sat", "sun", "mon", "tue", "wed", "thu", "fri"]),
+    days: z.array(z.enum(["sat", "sun", "mon", "tue", "wed", "thu", "fri"])),
 
     startTime: z.string().refine((time)=>{
       const regex = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -42,10 +42,20 @@ const updateOfferedCourseValidationSchema = z.object({
 
     maxCapacity: z.number(),
 
-    days: z.enum(["sat", "sun", "mon", "tue", "wed", "thu", "fri"]),
+    days: z.array(z.enum(["sat", "sun", "mon", "tue", "wed", "thu", "fri"])),
 
-    startTime: z.string(),
-    endTime: z.string(),
+    startTime: z.string().refine((time)=>{
+      const regex = /^([01]\d|2[0-3]):[0-5]\d$/;
+      return regex.test(time);
+    },{
+      message:'invalid time format'
+    }),
+    endTime: z.string().refine((time)=>{
+      const regex = /^([01]\d|2[0-3]):[0-5]\d$/;
+      return regex.test(time);
+    },{
+      message:'invalid time format in end time '
+    }),
   }),
 })
 
