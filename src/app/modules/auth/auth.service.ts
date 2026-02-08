@@ -3,7 +3,9 @@ import config from "../../config";
 import { User } from "../user/user.model";
 import { TLoginUser } from "./auth.interface";
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { createToken } from "./auth.untils";
+import { sendEmail } from "../../utils/sendEmail";
 
 
 
@@ -12,7 +14,7 @@ import jwt from 'jsonwebtoken';
 const loginUser =async (payload:TLoginUser) =>{
 
   //checking if the user is exits in the database
-  const isUserExits = await User.findOne({id:payload.id})
+  const isUserExits = await User.findOne({id:payload.id}).select('+password')
   // console.log(isUserExits)
 
   if(!isUserExits){
@@ -43,15 +45,98 @@ const loginUser =async (payload:TLoginUser) =>{
     userId:isUserExits.id,
     role:isUserExits?.role,
   }
-  const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, { expiresIn: '10d' });
+  const accessToken = createToken
+  (jwtPayload,config.jwt_access_secret as string,'1d')
 
+  const refreshToken = createToken
+  (jwtPayload,config.jwt_refresh_secret as string, '100d')
   // console.log(payload);
   return {
     accessToken,
+    refreshToken,
     needsPasswordChange:isUserExits.needsPasswordChange,
   };
 }
 
+
+const changePassword = async (
+  user: JwtPayload,
+  payload: { oldPassword: string; newPassword: string }
+) => {
+
+  const isUserExits = await User.findOne({ id: user.userId }).select('+password')
+
+  if (!isUserExits) {
+    throw new AppError(404, 'This user is not found!')
+  }
+
+  if (isUserExits.isDeleted) {
+    throw new AppError(404, 'This user is deleted!')
+  }
+
+  if (isUserExits.status === 'blocked') {
+    throw new AppError(404, 'This user is blocked!')
+  }
+
+  const isPasswordMatched = await bcrypt.compare(
+    payload.oldPassword,
+    isUserExits.password
+  )
+
+  if (!isPasswordMatched) {
+    throw new AppError(400, 'Password do not matched')
+  }
+
+  const newHashPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_salt_round)
+  )
+
+  const result = await User.findOneAndUpdate(
+    { id: user.userId, role: user.role },
+    {
+      password: newHashPassword,
+      needsPasswordChange: false,  
+      passwordChangeAt:new Date()
+    },
+    { new: true }
+  )
+
+  return result
+}
+
+const forgetPassword =async (userId:string) =>{
+
+  const isUserExits = await User.findOne({ id: userId }).select('+password')
+
+  if (!isUserExits) {
+    throw new AppError(404, 'This user is not found!')
+  }
+
+  if (isUserExits.isDeleted) {
+    throw new AppError(404, 'This user is deleted!')
+  }
+
+  if (isUserExits.status === 'blocked') {
+    throw new AppError(404, 'This user is blocked!')
+  }
+
+  const jwtPayload = {
+    userId:isUserExits.id,
+    role:isUserExits?.role,
+  }
+  const accessToken = createToken
+  (jwtPayload,config.jwt_access_secret as string,'10m')
+
+  const resetUiLink = `${config.reset_password_link}?id=${isUserExits.id}&token=${accessToken}`
+
+
+  sendEmail(isUserExits.email,resetUiLink)
+}
+
+
 export const AuthServices = {
   loginUser,
+  changePassword,
+  forgetPassword,
 }

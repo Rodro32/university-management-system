@@ -5,13 +5,16 @@ import { studentZodSchema } from '../student/student.zod.validation';
 import validateRequest from '../../midlewares/validateRequest';
 import { createFacultyValidationSchema } from '../Faculty/faculty.validation';
 import { createAdminValidationSchema } from '../Admin/admin.validation';
+import auth from '../../midlewares/auth';
+import { USER_ROLE } from './user.constant';
 
 const router = express.Router();
 
 
 
 router.post(
-  '/create-student',validateRequest(studentZodSchema),
+  '/create-student'
+  , auth(USER_ROLE.admin), validateRequest(studentZodSchema),
   userController.createStudent);
 
 router.post(

@@ -10,12 +10,13 @@ const getSingleFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is retrieved succesfully',
+    message: 'Faculty is retrieved successfully',
     data: result,
   });
 });
 
 const getAllFaculties = catchAsync(async (req, res) => {
+  console.log('test',req.user);
   const result = await FacultyServices.getAllFacultiesFromDB(req.query);
 
   sendResponse(res, {
