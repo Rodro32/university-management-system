@@ -135,7 +135,7 @@ const forgetPassword =async (userId:string) =>{
 }
 
 
-const resetPassword = async (payload:{id:string, newPassword:string},token)=>{
+const resetPassword = async (payload:{id:string, newPassword:string},token:string)=>{
   const isUserExits = await User.findOne({ id: payload.id }).select('+password')
 
   if (!isUserExits) {
@@ -151,7 +151,7 @@ const resetPassword = async (payload:{id:string, newPassword:string},token)=>{
   }
 
   const isPasswordMatched = await bcrypt.compare(
-    payload.oldPassword,
+    payload.newPassword,
     isUserExits.password
   )
 
