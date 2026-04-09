@@ -135,8 +135,35 @@ const forgetPassword =async (userId:string) =>{
 }
 
 
+const resetPassword = async (payload:{id:string, newPassword:string},token)=>{
+  const isUserExits = await User.findOne({ id: payload.id }).select('+password')
+
+  if (!isUserExits) {
+    throw new AppError(404, 'This user is not found!')
+  }
+
+  if (isUserExits.isDeleted) {
+    throw new AppError(404, 'This user is deleted!')
+  }
+
+  if (isUserExits.status === 'blocked') {
+    throw new AppError(404, 'This user is blocked!')
+  }
+
+  const isPasswordMatched = await bcrypt.compare(
+    payload.oldPassword,
+    isUserExits.password
+  )
+
+  if (!isPasswordMatched) {
+    throw new AppError(400, 'Password do not matched')
+  }
+}
+
+
 export const AuthServices = {
   loginUser,
   changePassword,
   forgetPassword,
+  resetPassword,
 }
